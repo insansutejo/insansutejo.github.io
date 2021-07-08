@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<!-- CSS Saya -->
+<link rel="stylesheet" href="css/style.css">
+<!-- Icon -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+
+<title>{{global.judul}}</title>
+<!-- Favicon -->
+<link rel="icon" href="images/favicon.png">
+<meta name="description" value="{{global.deskripsi}}">
+</head>
+<body id="home">
+<!--Navbar-->
+{{>nav}}
+<!--Akhir Navbar-->
+
+<!-- Jumbotron -->
+{{>jumbo}}
+<!-- Akhir Jumbotron -->
+
+<!-- About -->
+{{>about}}
+<!-- Akhir About -->
+
+<!-- Projects -->
+{{>projects}}
+<!-- Akhir Projects -->
+
+<!-- Contact -->
+{{>contact}}
+<!-- Akhir Contact -->
+
+<!-- Footer -->
+{{>footer}}
+<!-- Akhir Footer -->
+<!-- Optional JavaScript; choose one of the two! -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<!--cek kosong-->
+
+<!--kirim pesan-->
+<script>
+(function(){
+    console.log('Hellooo')
+    $('#btn-pesan').click(function(event){
+        const btnKirim=document.querySelector('.btn-kirim');
+        const btnLoading=document.querySelector('.btn-loading');
+        const myForm=document.querySelector('.my-form');
+
+        if (event)
+        event.preventDefault()
+        //tampikan loading
+        btnLoading.classList.toggle('d-none');
+        btnKirim.classList.toggle('d-none');
+        var pesan={
+            nama:$('#nama').val(),
+            email:$('#email').val(),
+            pesan:$('#pesan').val()
+        }
+        console.log('pesan: ' +JSON.stringify(pesan))
+        $.ajax({
+            url:'/pesan',
+            method:'post',
+            data:pesan,
+            success:function(resp){
+                console.log('pesan diterima: '+JSON.stringify(resp))
+                //tampilkan tombol kirim
+                btnLoading.classList.toggle('d-none');
+                btnKirim.classList.toggle('d-none');
+                //alert
+                $('#my-alert').html('<div class="alert alert-success alert-dismissible fade show" role="alert"><b>Terima kasih</b>, pesan berhasil dikirim<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                //reset form
+                myForm.reset();
+            },
+            error:function(resp){
+
+            }
+        })
+    })
+})()
+</script>
+</body>
+</html>
