@@ -3,4 +3,6 @@
 .DS_Store
 package-lock.json
 .turbo-deploy
+/__pycache__/
+*.pyc
 /tmp/voiceover-output/
