@@ -112,7 +112,8 @@ async def get_voices():
         voices = list_edge_tts_voices()
         return {"voices": voices}
     except Exception as exc:
-        return {"voices": [], "error": str(exc)}
+        logger.warning("Failed to list Edge TTS voices: %s", exc)
+        return {"voices": [], "error": "Could not retrieve voice list."}
 
 
 @app.get("/api/models")
