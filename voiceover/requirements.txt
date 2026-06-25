@@ -1,0 +1,13 @@
+# Core web framework
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+
+# Template rendering (used by FastAPI)
+jinja2>=3.1.4
+
+# HTTP client (Ollama communication)
+requests>=2.32.0
+
+# TTS engines
+edge-tts>=6.1.12          # Online, high-quality TTS (Microsoft Edge)
+pyttsx3>=2.90             # Offline TTS fallback
