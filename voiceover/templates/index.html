@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Voice Over</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Bootstrap 5 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    crossorigin="anonymous"
+  />
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+</head>
+<body class="bg-dark text-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-black border-bottom border-secondary px-4">
+  <span class="navbar-brand d-flex align-items-center gap-2">
+    <i class="bi bi-soundwave fs-4 text-info"></i>
+    <strong>AI Voice Over</strong>
+  </span>
+  <span class="badge bg-info text-dark">Powered by LLama + Edge TTS</span>
+</nav>
+
+<!-- Main -->
+<main class="container py-5">
+  <div class="row justify-content-center g-4">
+
+    <!-- Left: Input panel -->
+    <div class="col-lg-7">
+      <div class="card bg-dark-subtle border-secondary shadow-sm">
+        <div class="card-body p-4">
+
+          <h5 class="card-title mb-3">
+            <i class="bi bi-keyboard text-info me-2"></i>Text Input
+          </h5>
+
+          <textarea
+            id="inputText"
+            class="form-control bg-dark text-light border-secondary mb-3"
+            rows="6"
+            placeholder="Type or paste your text here…"
+          ></textarea>
+
+          <!-- Settings row -->
+          <div class="row g-3 mb-3">
+
+            <div class="col-sm-6">
+              <label class="form-label small text-secondary">AI Character</label>
+              <select id="character" class="form-select bg-dark text-light border-secondary">
+                <option value="friendly">😊 Friendly</option>
+                <option value="professional">🎙️ Professional</option>
+                <option value="storyteller">📖 Storyteller</option>
+                <option value="assistant">🤖 Assistant</option>
+              </select>
+            </div>
+
+            <div class="col-sm-6">
+              <label class="form-label small text-secondary">Ollama Model</label>
+              <select id="model" class="form-select bg-dark text-light border-secondary">
+                <option value="llama3">llama3</option>
+              </select>
+            </div>
+
+            <div class="col-sm-6">
+              <label class="form-label small text-secondary">TTS Engine</label>
+              <select id="ttsEngine" class="form-select bg-dark text-light border-secondary">
+                <option value="edge_tts">Edge TTS (online, high quality)</option>
+                <option value="pyttsx3">pyttsx3 (offline, basic)</option>
+              </select>
+            </div>
+
+            <div class="col-sm-6">
+              <label class="form-label small text-secondary">Voice</label>
+              <select id="voice" class="form-select bg-dark text-light border-secondary">
+                <optgroup label="English (US)">
+                  <option value="en-US-JennyNeural">Jenny (Female, US)</option>
+                  <option value="en-US-GuyNeural">Guy (Male, US)</option>
+                  <option value="en-US-AriaNeural">Aria (Female, US)</option>
+                </optgroup>
+                <optgroup label="English (UK / AU)">
+                  <option value="en-GB-SoniaNeural">Sonia (Female, UK)</option>
+                  <option value="en-AU-NatashaNeural">Natasha (Female, AU)</option>
+                </optgroup>
+                <optgroup label="Indonesian">
+                  <option value="id-ID-GadisNeural">Gadis (Female, ID)</option>
+                  <option value="id-ID-ArdiNeural">Ardi (Male, ID)</option>
+                </optgroup>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- LLM toggle -->
+          <div class="form-check form-switch mb-4">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="useLlm"
+              checked
+            />
+            <label class="form-check-label text-secondary" for="useLlm">
+              Use AI (LLama) to enhance narration
+            </label>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="d-flex gap-2">
+            <button id="generateBtn" class="btn btn-info px-4" onclick="generateVoice()">
+              <i class="bi bi-play-circle me-1"></i>Generate Voice
+            </button>
+            <button class="btn btn-outline-secondary" onclick="clearAll()">
+              <i class="bi bi-trash me-1"></i>Clear
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Output panel -->
+    <div class="col-lg-5">
+      <div class="card bg-dark-subtle border-secondary shadow-sm h-100">
+        <div class="card-body p-4 d-flex flex-column">
+
+          <h5 class="card-title mb-3">
+            <i class="bi bi-headphones text-info me-2"></i>Output
+          </h5>
+
+          <!-- Status -->
+          <div id="status" class="alert alert-secondary py-2 mb-3 d-none" role="alert"></div>
+
+          <!-- Spinner -->
+          <div id="spinner" class="text-center my-4 d-none">
+            <div class="spinner-border text-info" role="status"></div>
+            <p class="mt-2 text-secondary small" id="spinnerMsg">Processing…</p>
+          </div>
+
+          <!-- Audio player -->
+          <div id="audioSection" class="d-none flex-grow-1 d-flex flex-column gap-3">
+            <audio
+              id="audioPlayer"
+              controls
+              class="w-100 rounded"
+            ></audio>
+            <a id="downloadLink" class="btn btn-outline-info btn-sm" download="voiceover.audio">
+              <i class="bi bi-download me-1"></i>Download Audio
+            </a>
+          </div>
+
+          <!-- Narration text -->
+          <div id="narrationSection" class="d-none mt-3">
+            <p class="small text-secondary mb-1">AI Narration Text:</p>
+            <div
+              id="narrationText"
+              class="bg-black rounded p-3 small text-light"
+              style="max-height: 200px; overflow-y: auto; white-space: pre-wrap;"
+            ></div>
+          </div>
+
+          <!-- Empty state -->
+          <div id="emptyState" class="text-center text-secondary my-auto">
+            <i class="bi bi-soundwave fs-1 d-block mb-2 opacity-25"></i>
+            <p class="small">Your generated audio will appear here.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /row -->
+</main>
+
+<!-- Footer -->
+<footer class="text-center text-secondary py-3 border-top border-secondary small mt-4">
+  AI Voice Over &mdash; LLama &plus; Edge TTS &mdash; Built with Python &amp; FastAPI
+</footer>
+
+<script src="/static/script.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  crossorigin="anonymous"
+></script>
+</body>
+</html>
